@@ -45,6 +45,7 @@ require("lazy").setup({
   { "nvim-telescope/telescope.nvim", tag = "0.1.8", dependencies = { "nvim-lua/plenary.nvim" } },
   { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+  { "nvim-treesitter/nvim-treesitter-textobjects" },
   { "lewis6991/gitsigns.nvim" },
   { "nvim-lualine/lualine.nvim" },
   { "numToStr/Comment.nvim" },
@@ -81,6 +82,14 @@ require("lazy").setup({
 
   -- vim-surround
   { "tpope/vim-surround" },
+  { "ThePrimeagen/refactoring.nvim", 
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    lazy = false,
+    opts = {},
+  },
 
   -- Theme
   { 
@@ -105,11 +114,89 @@ vim.keymap.set("n", "<leader>fb", require("telescope.builtin").buffers,    { des
 vim.keymap.set("n", "<leader>fs", require("telescope.builtin").lsp_document_symbols, { desc = "Symbols" })
 
 -- Treesitter ------------------------------------------------------------------
+-- require("nvim-treesitter.configs").setup({
+--   ensure_installed = { "python", "lua", "vim", "bash", "json", "markdown" },
+--   highlight = { enable = true },
+--   indent = { enable = true },
+-- })
 require("nvim-treesitter.configs").setup({
   ensure_installed = { "python", "lua", "vim", "bash", "json", "markdown" },
   highlight = { enable = true },
   indent = { enable = true },
+
+  textobjects = {
+    select = {
+      enable = true,
+      lookahead = true, -- jump forward to nearest textobject
+      include_surrounding_whitespace = false,
+      keymaps = {
+        -- Functions
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+
+        -- Classes
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
+
+        -- Parameters/arguments
+        ["aa"] = "@parameter.outer",
+        ["ia"] = "@parameter.inner",
+      },
+      selection_modes = {
+        ["@function.outer"]  = "V",  -- linewise
+        ["@class.outer"]     = "V",
+      },
+    },
+
+    move = {
+      enable = true,
+      set_jumps = true,
+      goto_next_start = {
+        ["]m"] = "@function.outer",
+        ["]]"] = "@class.outer",
+      },
+      goto_previous_start = {
+        ["[m"] = "@function.outer",
+        ["[["] = "@class.outer",
+      },
+    },
+
+    swap = {
+      enable = true,
+      swap_next = {
+        ["<leader>a"] = "@parameter.inner",
+      },
+      swap_previous = {
+        ["<leader>A"] = "@parameter.inner",
+      },
+    },
+  },
 })
+
+-- Refactoring -----------------------------------------------------------------
+require('refactoring').setup({})
+
+vim.keymap.set({ "n", "x" }, "<leader>re",
+  function() return require('refactoring').refactor('Extract Function') end,
+  { expr = true, desc = "Refactor: Extract function" })
+vim.keymap.set({ "n", "x" }, "<leader>rf",
+  function() return require('refactoring').refactor('Extract Function To File') end,
+  { expr = true, desc = "Refactor: Extract function to file" })
+vim.keymap.set({ "n", "x" }, "<leader>rv",
+  function() return require('refactoring').refactor('Extract Variable') end,
+  { expr = true, desc = "Refactor: Extract variable" })
+vim.keymap.set({ "n", "x" }, "<leader>rI",
+  function() return require('refactoring').refactor('Inline Function') end,
+  { expr = true, desc = "Refactor: Inline function" })
+vim.keymap.set({ "n", "x" }, "<leader>ri",
+  function() return require('refactoring').refactor('Inline Variable') end,
+  { expr = true, desc = "Refactor: Inline variable" })
+vim.keymap.set({ "n", "x" }, "<leader>rbb",
+  function() return require('refactoring').refactor('Extract Block') end,
+  { expr = true, desc = "Refactor: Extract block" })
+vim.keymap.set({ "n", "x" }, "<leader>rbf",
+  function() return require('refactoring').refactor('Extract Block To File') end,
+  { expr = true, desc = "Refactor: Extract block to file" })
 
 -- Lualine, Gitsigns, Comment, WhichKey, Autopairs -----------------------------
 require("lualine").setup({ options = { theme = "auto" } })
@@ -165,7 +252,7 @@ vim.lsp.config('basedpyright', {
     basedpyright = {
       typeCheckingMode = "standard",          -- "strict" if you prefer
       disableOrganizeImports = true,          -- Ruff handles this
-      analysis = { autoImportCompletions = true },
+      analysis = { autoImportCompletions = false }, -- turning off spammy auto-import suggestions
     },
   },
 })
