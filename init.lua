@@ -20,6 +20,11 @@ vim.o.updatetime = 250
 vim.o.signcolumn = "yes"
 vim.o.clipboard = "unnamedplus"
 
+-- Indent defaults: 2 spaces unless a filetype/plugin overrides
+vim.o.expandtab   = true   -- use spaces
+vim.o.tabstop     = 2      -- visual width of a <Tab>
+vim.o.softtabstop = 2      -- how many spaces <Tab>/<BS> insert/delete
+vim.o.shiftwidth  = 2      -- indentation size for >>, <<, ==, etc.
 -- If you use a colorscheme, set it here (example):
 -- vim.cmd.colorscheme("gruvbox")
 
