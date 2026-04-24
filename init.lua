@@ -58,6 +58,7 @@ require("lazy").setup({
   { "b0o/SchemaStore.nvim" },
   {
     "nvim-treesitter/nvim-treesitter",
+    branch="main",
     lazy = false,
     build = ":TSUpdate",
     config = function()
@@ -206,6 +207,7 @@ require("lazy").setup({
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
+      "lewis6991/async.nvim",
     },
     lazy = false,
   },
