@@ -683,3 +683,6 @@ end, { desc = "Show diagnostics at cursor" })
 -- Insert-mode escape shortcuts -------------------------------------------------
 vim.keymap.set("i", "jk", "<Esc>")
 vim.keymap.set("i", "kj", "<Esc>")
+
+-- Sd to docstring a selection in Python (using nvim-surround)
+vim.g.surround_100 = '"""\r"""'
