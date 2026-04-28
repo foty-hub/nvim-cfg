@@ -1,6 +1,6 @@
-# Neovim config
+# Neovim and tmux config
 
-Personal Neovim configuration.
+Personal Neovim and tmux configuration.
 
 ## Install
 
@@ -10,3 +10,11 @@ nvim
 ```
 
 `init.lua` bootstraps `lazy.nvim` on first launch. Some language tooling is expected to be available on `PATH`, or through `uv run nvim` for project-local Python tooling.
+
+## tmux
+
+Track tmux through this repo by symlinking the real config path:
+
+```sh
+ln -s ~/.config/nvim/tmux.conf ~/.tmux.conf
+```

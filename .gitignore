@@ -3,3 +3,4 @@ init.backup.lua
 *.swp
 *.swo
 *.tmp
+.codex
