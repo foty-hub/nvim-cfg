@@ -68,7 +68,7 @@ require("lazy").setup({
         install_dir = vim.fn.stdpath("data") .. "/site",
       })
 
-      ts.install({
+     ts.install({
         "python",
         "lua",
         "vim",
@@ -221,7 +221,8 @@ require("lazy").setup({
       require("monokai-pro").setup({ filter = "ristretto" })
       vim.cmd.colorscheme("monokai-pro")
     end,
-  }
+  },
+  {"petertriho/nvim-scrollbar"}
 })
 
 -- Telescope --------------------------------------------------------------------
@@ -686,3 +687,6 @@ vim.keymap.set("i", "kj", "<Esc>")
 
 -- Sd to docstring a selection in Python (using nvim-surround)
 vim.g.surround_100 = '"""\r"""'
+
+-- Scrollbar
+require("scrollbar").setup()
