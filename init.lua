@@ -9,6 +9,7 @@
 --   lemminx                                 -- XML LSP
 --   clangd, clang-format                    -- C/C++
 --   rust-analyzer, rustfmt                  -- Rust
+--   opam install dune ocaml-lsp-server odoc ocamlformat utop
 
 -- Bootstrap lazy.nvim ----------------------------------------------------------
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -33,6 +34,24 @@ vim.o.updatetime = 250
 vim.o.signcolumn = "yes"
 vim.o.clipboard = "unnamedplus"
 
+-- Make long lines wrap visually.
+vim.opt.wrap = true
+-- Wrap at word boundaries, not in the middle of words.
+vim.opt.linebreak = true
+-- Preserve indentation on wrapped display lines.
+vim.opt.breakindent = true
+-- Make j/k move by visual lines unless a count is given.
+vim.keymap.set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.opt.smoothscroll = true
+vim.opt.display:append("lastline")
+
+vim.filetype.add({
+  extension = {
+    ml = "ocaml",
+    mli = "ocaml.interface",
+  },
+})
 -- Helper: uv-aware command/args ------------------------------------------------
 local HAS_UV = (vim.fn.executable("uv") == 1)
 
@@ -80,6 +99,8 @@ require("lazy").setup({
         "cpp",
         "rust",
         "typst",
+        "ocaml",
+        "ocaml_interface"
       })
 
       local ts_lang_by_ft = {
@@ -99,6 +120,8 @@ require("lazy").setup({
         cpp = "cpp",
         rust = "rust",
         typst = "typst",
+        ocaml = "ocaml",
+        ["ocaml.interface"] = "ocaml_interface"
       }
 
       local group = vim.api.nvim_create_augroup("treesitter_start", { clear = true })
@@ -484,13 +507,28 @@ vim.lsp.config("rust_analyzer", {
     ["rust-analyzer"] = {},
   },
 })
-
+vim.lsp.config("ocamllsp", {
+  cmd = { "ocamllsp" },
+  filetypes = {
+    "ocaml",
+    "ocaml.interface",
+    "dune",
+  },
+  root_markers = {
+    { "dune-project", "dune-workspace" },
+    { "*.opam" },
+    ".git",
+  },
+  capabilities = lsp_cap,
+  on_attach = on_attach,
+})
 for _, server in ipairs({
   "basedpyright",
   "jsonls",
   "lemminx",
   "clangd",
   "rust_analyzer",
+  "ocamllsp",
 }) do
   vim.lsp.enable(server)
 end
@@ -522,6 +560,9 @@ require("conform").setup({
     cpp = { "clang-format" },
 
     rust = { "rustfmt" },
+
+    ocaml = { "ocamlformat" },
+    ["ocaml.interface"] = { "ocamlformat" }
   },
   formatters = {
     black = {
